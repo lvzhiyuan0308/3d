@@ -1,0 +1,34 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "human3d-local"
+version = "0.2.0"
+description = "Local SMPL-X multiview fitting, class-filtered textures and solid print export"
+readme = "README.md"
+requires-python = ">=3.11,<3.12"
+dependencies = [
+    "numpy==1.26.4",
+    "scipy==1.17.1",
+    "numba==0.60.0",
+    "torch>=2.8,<2.9",
+    "smplx==0.1.28",
+    "opencv-contrib-python==4.11.0.86",
+    "trimesh==5.2.1",
+    "scikit-image==0.22.0",
+    "Pillow==10.4.0",
+]
+
+[project.optional-dependencies]
+vision = ["mediapipe==0.10.14", "jax==0.4.35", "jaxlib==0.4.35"]
+
+[project.scripts]
+human3d = "human3d.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.ruff]
+target-version = "py311"
+line-length = 88

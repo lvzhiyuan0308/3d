@@ -1,0 +1,113 @@
+{
+  "source": "2026-11-20 local V2 run before source organization; not a fresh scan-accuracy benchmark",
+  "hardware": "RTX 4060 Laptop 8GB; Windows; existing Python 3.11 environment",
+  "exports": {
+    "surface_vertices": 47853,
+    "surface_triangles": 95632,
+    "uv_split_vertices": 49741,
+    "atlas": [
+      4096,
+      4096
+    ],
+    "bones": 55,
+    "animation_validated": false,
+    "print_triangles": 322424,
+    "procedural_hair_texture": true,
+    "skin_tone_fill_from_reference": true,
+    "semantic_filtering": true,
+    "face_source": "one original photo aligned to SMPL-X 51 landmarks",
+    "opaque_sleeves": true,
+    "front_hair_strips_removed": true,
+    "ankles_reinforced_print_only": true,
+    "print_watertight": true,
+    "print_components": 1,
+    "print_size_mm": [
+      56.952400662885616,
+      52.34406287504133,
+      200.0
+    ],
+    "normal_maps_used": false,
+    "native_blend_generated": false,
+    "export_method": "Local Python, projective atlas, GLB skin attributes and solid-field base union"
+  },
+  "validation": {
+    "glb_version": 2,
+    "glb_length_verified": true,
+    "glb_embedded_images": 1,
+    "glb_joints": 55,
+    "glb_roundtrip_geometry": 1,
+    "stl_watertight": true,
+    "stl_winding_consistent": true,
+    "stl_volume_mm3": 139347.7896596139,
+    "stl_height_mm": 200.0,
+    "physical_print_tested": false,
+    "minimum_feature_thickness_verified": false
+  },
+  "revision": {
+    "front_strips_removed": true,
+    "back_hair_closed_solid": true,
+    "back_hair_cross_sections": [
+      {
+        "height_body_m": -0.05587136030197143,
+        "hair_depth_mm": 8.729726587321803,
+        "overlap_into_anatomy_mm": 2.653136373350987,
+        "inner_wall_offset_from_body_back_mm": 2.653136373350987
+      },
+      {
+        "height_body_m": 0.00746197303136191,
+        "hair_depth_mm": 9.897595478669679,
+        "overlap_into_anatomy_mm": 1.7710067299461199,
+        "inner_wall_offset_from_body_back_mm": 1.7710067299461199
+      },
+      {
+        "height_body_m": 0.07079530636469525,
+        "hair_depth_mm": 11.065464407341139,
+        "overlap_into_anatomy_mm": 1.82852147936291,
+        "inner_wall_offset_from_body_back_mm": 1.82852147936291
+      },
+      {
+        "height_body_m": 0.13412863969802857,
+        "hair_depth_mm": 12.17112542428593,
+        "overlap_into_anatomy_mm": 1.6512504391693754,
+        "inner_wall_offset_from_body_back_mm": 1.6512504391693754
+      },
+      {
+        "height_body_m": 0.19746197303136193,
+        "hair_depth_mm": 13.232824526064414,
+        "overlap_into_anatomy_mm": 2.5416037598220984,
+        "inner_wall_offset_from_body_back_mm": 2.5416037598220984
+      },
+      {
+        "height_body_m": 0.2607953063646953,
+        "hair_depth_mm": 14.294523324018625,
+        "overlap_into_anatomy_mm": 1.646012869866654,
+        "inner_wall_offset_from_body_back_mm": 1.646012869866654
+      },
+      {
+        "height_body_m": 0.3241286396980286,
+        "hair_depth_mm": 13.130123556281736,
+        "overlap_into_anatomy_mm": 2.764434854715669,
+        "inner_wall_offset_from_body_back_mm": 2.764434854715669
+      }
+    ],
+    "measured_ankle_cross_sections": [
+      {
+        "joint": 7,
+        "height_mm": 11.5107236188046,
+        "width_x_mm": 7.376943832523153,
+        "depth_y_mm": 18.187395755506703
+      },
+      {
+        "joint": 8,
+        "height_mm": 12.246377476276278,
+        "width_x_mm": 7.62819857123108,
+        "depth_y_mm": 17.85084746892678
+      }
+    ],
+    "class_filtered_sources": true,
+    "single_photo_face": true,
+    "global_minimum_wall_thickness_verified": false,
+    "physical_print_tested": false,
+    "scope": "Selected hair centre sections and ankle horizontal sections, not global minimum feature analysis"
+  }
+}
