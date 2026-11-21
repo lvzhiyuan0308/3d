@@ -8,6 +8,7 @@ from human3d.settings import (
     work_dir,
     model_path,
     compute_device,
+    load_settings,
 )
 import os, json, time
 
@@ -15,6 +16,7 @@ os.environ.setdefault("OMP_NUM_THREADS", "4")
 import numpy as np, cv2, torch
 from scipy.ndimage import distance_transform_edt
 from human3d.core import Body, torch_project, project, normals, rasterize
+from human3d.fit_terms import keypoint_term, view_weight_vector
 
 ROOT = work_dir()
 OUT = ROOT / "fit"
@@ -26,6 +28,11 @@ MODEL = model_path()
 device = compute_device()
 body = Body(MODEL, device)
 views = json.loads((ROOT / "prepared/views.json").read_text())
+CFG = load_settings()
+HEIGHT_M = CFG.height_m  # one source of truth for the height prior (config: subject.height_m)
+HEIGHT_WEIGHT = CFG.fit_height_weight
+# Camera scale is initialised from mask height / this value (mask includes hair and shoes).
+CAMERA_INIT_HEIGHT_M = 1.77
 jointmap = {
     "l_hip": 1,
     "r_hip": 2,
@@ -75,7 +82,10 @@ for view in views:
         (torch.tensor(xy, device=device), torch.tensor(weights, device=device))
     )
 gt = torch.tensor(np.array(gt), device=device)
-conf = torch.tensor(np.array(conf), device=device)
+# Per-view weights from views.json (all ones unless [fit] use_view_weights = true).
+view_w = view_weight_vector(views, "geometry_weight", CFG.fit_use_view_weights, device)
+conf = torch.tensor(np.array(conf), device=device) * view_w[:, None]
+image_heights = torch.tensor([v["size"][1] for v in views], dtype=torch.float32, device=device)
 pose0 = np.zeros((4, 165), np.float32)
 pose0[:, 3 + (16 - 1) * 3 + 2] = -1.40
 pose0[:, 3 + (17 - 1) * 3 + 2] = 1.40
@@ -91,7 +101,7 @@ for i, view in enumerate(views):
     w, h = view["size"]
     mask = cv2.imread(str(ROOT / "prepared" / (view["name"] + "_mask.png")), 0) > 0
     y, x = np.where(mask)
-    scale = (y.max() - y.min()) / 1.77
+    scale = (y.max() - y.min()) / CAMERA_INIT_HEIGHT_M
     cy = (y.max() + y.min()) / 2 + float(
         (v[i, :, 1].max() + v[i, :, 1].min()) / 2
     ) * scale
@@ -110,8 +120,7 @@ def terms(v, j):
     points = torch.cat([j[:, list(jointmap.values())], v[:, vids]], 1)
     pred = torch_project(points, cameras)
     # Pixel-space Geman-McClure prevents a bad detector point from dominating.
-    err = ((pred - gt) / 534) ** 2
-    kp = (err / (err + 0.0025) * conf[:, :, None]).mean()
+    kp = keypoint_term(pred, gt, conf, image_heights)
     pp = torch_project(v[:, samples], cameras)
     outside = kp * 0
     cover = kp * 0
@@ -123,10 +132,10 @@ def terms(v, j):
         sdf = torch.nn.functional.grid_sample(
             sdfs[i], grid[None, None], align_corners=True, padding_mode="border"
         ).reshape(-1)
-        outside = outside + (sdf.relu() / h).square().mean()
+        outside = outside + (sdf.relu() / h).square().mean() * view_w[i]
         xy, ww = targets[i]
         dist = torch.cdist(xy[None] / h, pp[i : i + 1] / h).squeeze(0).amin(1)
-        cover = cover + (dist.square() * ww).mean()
+        cover = cover + (dist.square() * ww).mean() * view_w[i]
     return kp, outside / 4, cover / 4
 
 
@@ -150,8 +159,14 @@ for step in range(300):
         + 0.07 * delta.square().mean()
         + 0.02 * (delta - delta.mean(0)).square().mean()
     )
-    # 1.695 m is an uncalibrated reference prior, not a measured body height.
-    loss = kp + outer * 12 + coverage * 3 + prior + (height - 1.695).square() * 0.4
+    # Config subject.height_m; unless subject.height_measured is set it is only a prior.
+    loss = (
+        kp
+        + outer * 12
+        + coverage * 3
+        + prior
+        + (height - HEIGHT_M).square() * HEIGHT_WEIGHT
+    )
     if step < 60:
         loss = kp + outer * 4 + coverage + prior + (beta * 0).sum()
     loss.backward()
@@ -289,8 +304,11 @@ report = {
     "views": diagnostics,
     "normal_loss_used": False,
     "normal_loss_reason": "No Sapiens weights installed. Image-derived surface normals were not fabricated.",
-    "height_prior_m": 1.695,
-    "height_is_measured": False,
+    "height_prior_m": HEIGHT_M,
+    "height_is_measured": CFG.height_is_measured,
+    "height_prior_weight": HEIGHT_WEIGHT,
+    "view_weights_used": bool(CFG.fit_use_view_weights),
+    "view_weights": view_w.cpu().tolist(),
     "generated_views_are_ground_truth": False,
     "log": log,
 }

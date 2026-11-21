@@ -11,6 +11,7 @@ import numpy as np, cv2
 from scipy.spatial import cKDTree, Delaunay
 from scipy.ndimage import distance_transform_edt, gaussian_filter, binary_fill_holes
 from human3d.core import project, normals, rasterize
+from human3d.geom2d import points_in_convex_polygon
 from human3d.layered import construct
 from human3d.texture_semantics import (
     masks_and_clean,
@@ -248,12 +249,7 @@ try:
     # Keep the contour/eyebrows, excluding synthetic hair around the face.
     centers = projected[0][ff].mean(1)
     faceoval = cv2.convexHull(anchors.astype("float32"))
-    valid &= np.array(
-        [
-            cv2.pointPolygonTest(faceoval, tuple(p.astype(float)), False) >= 0
-            for p in centers
-        ]
-    )
+    valid &= points_in_convex_polygon(centers, faceoval)
     face_count = int(valid.sum())
     if face_count:
         h, w = original.shape[:2]

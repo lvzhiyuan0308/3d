@@ -11,6 +11,23 @@ import numpy as np, trimesh
 from scipy.spatial import cKDTree, ConvexHull
 
 
+def scalp_cap_mask(can, faces, in_head, head_center):
+    """Faces of the scalp cap: all vertices on the head and above a tilted plane (vectorised)."""
+    p = can[faces].mean(1)
+    front = p[:, 2] - head_center[2]
+    threshold = head_center[1] - 0.055 + np.clip((front + 0.045) / 0.10, 0, 1) * 0.13
+    return in_head[faces].all(1) & (p[:, 1] > threshold)
+
+
+def boundary_cap_faces(boundary, n):
+    """Two triangles per boundary edge (a, b) joining a shell to its offset copy (vectorised)."""
+    boundary = np.asarray(boundary, dtype=int).reshape(-1, 2)
+    a, b = boundary[:, 0], boundary[:, 1]
+    return np.stack([np.stack([b, a, a + n], 1), np.stack([b, a + n, b + n], 1)], 1).reshape(
+        -1, 3
+    )
+
+
 def construct(d):
     rest = d["rest_vertices"]
     base = trimesh.Trimesh(rest, d["faces"], process=False)
@@ -41,10 +58,7 @@ def construct(d):
             edges = m.edges
             ii = trimesh.grouping.group_rows(m.edges_sorted, require_count=1)
             boundary = edges[ii]
-            cap = []
-            for a, b in boundary:
-                cap.extend([(b, a, a + N), (b, a + N, b + N)])
-            ff = np.concatenate([ff, np.array(cap, dtype=int).reshape(-1, 3)])
+            ff = np.concatenate([ff, boundary_cap_faces(boundary, N)])
             m = trimesh.Trimesh(vv, ff, process=False)
         pieces.append(m)
         names.append(name)
@@ -181,13 +195,7 @@ def construct(d):
     hg = d["weights"][:, 15] > 0.4
     head = can[hg]
     hc = (head.min(0) + head.max(0)) / 2
-    mask = []
-    for tri in d["faces"]:
-        p = can[tri].mean(0)
-        front = p[2] - hc[2]
-        threshold = hc[1] - 0.055 + np.clip((front + 0.045) / 0.10, 0, 1) * 0.13
-        mask.append(hg[tri].all() and p[1] > threshold)
-    capf = d["faces"][np.array(mask)]
+    capf = d["faces"][scalp_cap_mask(can, d["faces"], hg, hc)]
     used = np.unique(capf)
     mapping = np.full(len(rest), -1)
     mapping[used] = np.arange(len(used))
@@ -245,7 +253,11 @@ def construct(d):
             hf.append(tri[::-1] if reverse else tri)
     hair = trimesh.Trimesh(vf, hf, process=True)
     hair.fix_normals()
-    assert hair.is_watertight and hair.volume > 0
+    if not (hair.is_watertight and hair.volume > 0):
+        raise RuntimeError(
+            "Back-hair loft is not a closed positive-volume solid (watertight="
+            f"{hair.is_watertight}, volume={hair.volume:.3e}); check head landmarks and fit."
+        )
     add(
         "Solid back hair embedded in anatomy",
         hair.vertices,
