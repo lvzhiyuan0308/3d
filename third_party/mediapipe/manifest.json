@@ -1,0 +1,73 @@
+{
+  "name": "mediapipe",
+  "version": "0.10.14",
+  "platform": "win_amd64",
+  "python": "cp311",
+  "provenance": {
+    "release_url": "https://pypi.org/pypi/mediapipe/0.10.14/json",
+    "download_url": "https://files.pythonhosted.org/packages/c1/0f/4dc0802131756a9fe4d46d2824352014b85a75baca386cb9e43057f39f15/mediapipe-0.10.14-cp311-cp311-win_amd64.whl",
+    "sha256": "1b7687d3b63590bcc601ad195b923b80a1b2d6be5cdf43711edc661cecd3dd47"
+  },
+  "files": [
+    {
+      "path": "third_party/mediapipe/models/pose_landmark_full.tflite",
+      "bytes": 6440512,
+      "sha256": "e9a5c5cb17f736fafd4c2ec1da3b3d331d6edbe8a0d32395855aeb2cdfd64b9f",
+      "package_path": "mediapipe/modules/pose_landmark/pose_landmark_full.tflite"
+    },
+    {
+      "path": "third_party/mediapipe/models/pose_detection.tflite",
+      "bytes": 2959046,
+      "sha256": "9ba9dd3d42efaaba86b4ff0122b06f29c4122e756b329d89dca1e297fd8f866c",
+      "package_path": "mediapipe/modules/pose_detection/pose_detection.tflite"
+    },
+    {
+      "path": "third_party/mediapipe/models/face_landmark.tflite",
+      "bytes": 1242398,
+      "sha256": "1055cb9d4a9ca8b8c688902a3a5194311138ba256bcc94e336d8373a5f30c814",
+      "package_path": "mediapipe/modules/face_landmark/face_landmark.tflite"
+    },
+    {
+      "path": "third_party/mediapipe/models/face_detection_short_range.tflite",
+      "bytes": 229714,
+      "sha256": "bbff11cebd1eb27a1e004cae0b0e63ec8c551cbf34a4451148b4908b8db3eca8",
+      "package_path": "mediapipe/modules/face_detection/face_detection_short_range.tflite"
+    },
+    {
+      "path": "third_party/mediapipe/graphs/pose_landmark_cpu.binarypb",
+      "bytes": 2418,
+      "sha256": "90ddc717625a3c1aedfdca124212a36ce595cdbbe46513fd93adca5202d8ff21",
+      "package_path": "mediapipe/modules/pose_landmark/pose_landmark_cpu.binarypb"
+    },
+    {
+      "path": "third_party/mediapipe/graphs/face_landmark_front_cpu.binarypb",
+      "bytes": 2361,
+      "sha256": "fa3c092da27d031d54ddd61a29b0e3dd521d53f55fa8898cb0f2b64d79cd6573",
+      "package_path": "mediapipe/modules/face_landmark/face_landmark_front_cpu.binarypb"
+    },
+    {
+      "path": "third_party/mediapipe/LICENSE",
+      "bytes": 12331,
+      "sha256": "8707eef0533987efc5b155d64761eeb6e20793f50b9bd1a68dad1cf4719d0ed8",
+      "package_path": "mediapipe-0.10.14.dist-info/LICENSE"
+    },
+    {
+      "path": "third_party/mediapipe/WHEEL",
+      "bytes": 102,
+      "sha256": "9d2c9bbf35a599d2671e2510498f9ded5d72730115513a97893bebd9eb21838e",
+      "package_path": "mediapipe-0.10.14.dist-info/WHEEL"
+    },
+    {
+      "path": "third_party/mediapipe/METADATA",
+      "bytes": 9873,
+      "sha256": "e4f047f0d0f704abc06c37c343ccc9e320ed8f6e92362a368d726a7b4fb1afd0",
+      "package_path": "mediapipe-0.10.14.dist-info/METADATA"
+    },
+    {
+      "path": "third_party/mediapipe/wheels/mediapipe-0.10.14-cp311-cp311-win_amd64.whl",
+      "bytes": 50834141,
+      "sha256": "1b7687d3b63590bcc601ad195b923b80a1b2d6be5cdf43711edc661cecd3dd47",
+      "package_path": null
+    }
+  ]
+}
