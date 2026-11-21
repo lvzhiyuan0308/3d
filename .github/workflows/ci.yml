@@ -1,0 +1,23 @@
+name: tests
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  unit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install CPU dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install torch --index-url https://download.pytorch.org/whl/cpu
+          pip install "numpy==1.26.4" scipy numba opencv-python-headless trimesh scikit-image pillow smplx ruff
+      - name: Lint the modules added in this change
+        run: ruff check src/human3d/fit_terms.py src/human3d/geom2d.py tests/test_review_fixes.py
+      - name: Unit tests
+        run: python -m unittest discover -s tests -v
