@@ -174,6 +174,7 @@ class FitLayoutInvarianceTest(unittest.TestCase):
         result = subprocess.run(
             command,
             env=env,
+            check=False,
             capture_output=True,
             text=True,
             timeout=900,
