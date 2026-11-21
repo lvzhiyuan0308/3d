@@ -13,12 +13,12 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 sys.path.insert(0, str(ROOT / "tests"))
 
-from human3d.settings import load_settings
-
 BASE = '[paths]\nsmplx_model="m"\noriginal_photo="p"\nturnaround="t"\n'
 
 
 def settings_from(extra=""):
+    from human3d.settings import load_settings
+
     with tempfile.TemporaryDirectory() as folder:
         config = Path(folder) / "config.toml"
         config.write_text(BASE + extra, encoding="utf8")
@@ -163,20 +163,33 @@ class FitLayoutInvarianceTest(unittest.TestCase):
         from synthetic import make_inputs
 
         config = make_inputs(folder, panel_h=panel_h)
-        env = dict(os.environ, HUMAN3D_CONFIG=str(config), HUMAN3D_LEGACY_USER_SITE="0")
-        stage = ROOT / "src/human3d/_stage.py"
-        subprocess.run(
-            [sys.executable, str(stage), "fit"],
-            env=env,
-            check=True,
-            capture_output=True,
+        legacy = os.environ.get("HUMAN3D_LEGACY_USER_SITE") == "1"
+        env = dict(
+            os.environ,
+            HUMAN3D_CONFIG=str(config),
+            HUMAN3D_LEGACY_USER_SITE="1" if legacy else "0",
         )
+        stage = ROOT / "src/human3d/_stage.py"
+        command = [sys.executable] + (["-s"] if legacy else []) + [str(stage), "fit"]
+        result = subprocess.run(
+            command,
+            env=env,
+            capture_output=True,
+            text=True,
+            timeout=900,
+        )
+        self.assertEqual(result.returncode, 0, (result.stdout + result.stderr)[-6000:])
         return np.load(Path(folder) / "work/fit/fit_result.npz")["betas"]
 
     def test_betas_do_not_depend_on_panel_height(self):
         with tempfile.TemporaryDirectory() as a, tempfile.TemporaryDirectory() as b:
             tall, short = self.run_fit(a, 534), self.run_fit(b, 300)
-        self.assertLess(float(np.abs(tall - short).max()), 0.1)
+        max_delta = float(np.abs(tall - short).max())
+        print(
+            f"Synthetic panel-height regression: max beta delta = {max_delta:.6f}",
+            flush=True,
+        )
+        self.assertLess(max_delta, 0.1)
 
 
 if __name__ == "__main__":
