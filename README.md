@@ -29,10 +29,12 @@
 ```powershell
 uv venv --python 3.11 .venv
 uv pip install --python .venv\Scripts\python.exe torch==2.8.0 --index-url https://download.pytorch.org/whl/cu128
-uv pip install --python .venv\Scripts\python.exe -e '.[vision]'
+uv pip install --python .venv\Scripts\python.exe -e '.[vision]' third_party/mediapipe/wheels/mediapipe-0.10.14-cp311-cp311-win_amd64.whl
 ```
 
 第一条安装命令选择 CUDA 12.8 的 PyTorch；CPU 环境应自行选择适配的 PyTorch 构建。`vision` 包含 MediaPipe 旧版 `solutions` 接口，首次从图像拟合时需要。安装需要网络；计算阶段不调用云端生成服务。
+
+仓库另存了 [MediaPipe 0.10.14 的 Windows/Python 3.11 安装包、四个 TFLite 模型及两个计算图](third_party/mediapipe/README.md)。上面的 Windows 安装命令使用该本地 wheel；其他平台可以保留 `-e '.[vision]'`，由包管理器选择适配版本。完整离线安装还需准备其他 Python 依赖，备份文件可运行 `python scripts/vendor_mediapipe.py --verify` 校验。
 
 上面的独立环境是整理后的安装方式，尚未在空白系统重新安装验证；本机复跑使用已有 Python 3.11、PyTorch 2.8.0+cu128、NumPy 1.26.4 环境。具体数值检查见 [验证记录](docs/validation.md)。
 

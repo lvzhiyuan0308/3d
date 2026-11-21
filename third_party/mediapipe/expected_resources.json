@@ -1,0 +1,35 @@
+{
+  "version": "0.10.14",
+  "resources": [
+    {
+      "package_path": "mediapipe/modules/pose_landmark/pose_landmark_full.tflite",
+      "bytes": 6440512,
+      "sha256": "e9a5c5cb17f736fafd4c2ec1da3b3d331d6edbe8a0d32395855aeb2cdfd64b9f"
+    },
+    {
+      "package_path": "mediapipe/modules/pose_detection/pose_detection.tflite",
+      "bytes": 2959046,
+      "sha256": "9ba9dd3d42efaaba86b4ff0122b06f29c4122e756b329d89dca1e297fd8f866c"
+    },
+    {
+      "package_path": "mediapipe/modules/face_landmark/face_landmark.tflite",
+      "bytes": 1242398,
+      "sha256": "1055cb9d4a9ca8b8c688902a3a5194311138ba256bcc94e336d8373a5f30c814"
+    },
+    {
+      "package_path": "mediapipe/modules/face_detection/face_detection_short_range.tflite",
+      "bytes": 229714,
+      "sha256": "bbff11cebd1eb27a1e004cae0b0e63ec8c551cbf34a4451148b4908b8db3eca8"
+    },
+    {
+      "package_path": "mediapipe/modules/pose_landmark/pose_landmark_cpu.binarypb",
+      "bytes": 2418,
+      "sha256": "90ddc717625a3c1aedfdca124212a36ce595cdbbe46513fd93adca5202d8ff21"
+    },
+    {
+      "package_path": "mediapipe/modules/face_landmark/face_landmark_front_cpu.binarypb",
+      "bytes": 2361,
+      "sha256": "fa3c092da27d031d54ddd61a29b0e3dd521d53f55fa8898cb0f2b64d79cd6573"
+    }
+  ]
+}

@@ -1,0 +1,47 @@
+name: Vendor MediaPipe offline assets
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/vendor-mediapipe.yml
+      - scripts/vendor_mediapipe.py
+      - third_party/mediapipe/expected_resources.json
+
+permissions:
+  contents: write
+
+concurrency:
+  group: vendor-mediapipe
+  cancel-in-progress: false
+
+jobs:
+  vendor:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 1
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Test the archive handling without external packages
+        run: python -m unittest discover -s tests -p test_mediapipe_vendor.py -v
+      - name: Fetch official Windows wheel and verify package resources
+        run: python scripts/vendor_mediapipe.py --download
+      - name: Verify all generated files offline
+        run: python scripts/vendor_mediapipe.py --verify
+      - name: Publish wheel, models, graphs and original license
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add third_party/mediapipe
+          if git diff --cached --quiet; then
+            echo 'MediaPipe assets are already up to date.'
+            exit 0
+          fi
+          git commit -m 'chore: vendor MediaPipe 0.10.14 Windows package and models [skip ci]'
+          git push origin HEAD:main

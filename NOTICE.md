@@ -2,6 +2,8 @@
 
 本项目调用 SMPL-X Python 包、PyTorch、NumPy、SciPy、Numba、OpenCV、MediaPipe、trimesh、scikit-image 与 Pillow。各依赖遵循各自的许可证和分发条款。
 
+`third_party/mediapipe/` 中的 MediaPipe 0.10.14 官方 Windows wheel 和包内资源保持原始内容。其 Apache 2.0 许可及随包的第三方声明原样保留于该目录的 `LICENSE`，官方 wheel 内也保留完整许可和元数据。此备份不改变本项目其他代码或 SMPL-X 模型的许可。
+
 SMPL-X 模型文件需要用户单独取得；本仓库不附带这些权重，也不授予其额外使用权限。参考：[SMPL-X](https://smpl-x.is.tue.mpg.de/)、[SMPL-X Python 实现](https://github.com/vchoutas/smplx)。
 
 本次按仓库拥有者指示加入原始照片、合成参考图和已生成的预览图片；它们没有随代码获得统一开源授权。拟合检查点、含模板信息的中间网格、生成模型与 SMPL-X 权重仍排除在 Git 提交外。使用者应自行确认输入和输出的使用范围。
