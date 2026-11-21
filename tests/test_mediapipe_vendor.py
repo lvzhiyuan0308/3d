@@ -4,6 +4,7 @@ import copy
 import hashlib
 import json
 from pathlib import Path
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -46,7 +47,7 @@ def fixture(folder, tag="cp311-cp311-win_amd64"):
             )
         prefix = f"mediapipe-{m.VERSION}.dist-info/"
         archive.writestr(
-            prefix + "METADATA", f"Name: mediapipe\nVersion: {m.VERSION}\n"
+            prefix + "METADATA", f"Name: mediapipe\r\nVersion: {m.VERSION}\r\n"
         )
         archive.writestr(prefix + "WHEEL", f"Wheel-Version: 1.0\nTag: {tag}\n")
         archive.writestr(
@@ -58,6 +59,41 @@ def fixture(folder, tag="cp311-cp311-win_amd64"):
 
 
 class MediaPipeVendorTests(unittest.TestCase):
+    def test_git_preserves_original_metadata_line_endings(self):
+        m = module()
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder)
+            wheel, expected = fixture(folder)
+            m.vendor_wheel(wheel, root, expected)
+            raw = (root / m.VENDOR / "METADATA").read_bytes()
+            self.assertIn(b"\r\n", raw)
+            (root / ".gitattributes").write_bytes(
+                (ROOT / ".gitattributes").read_bytes()
+            )
+            subprocess.run(
+                ["git", "init", "-q", str(root)], check=True, capture_output=True
+            )
+            subprocess.run(
+                [
+                    "git",
+                    "-C",
+                    str(root),
+                    "-c",
+                    "core.autocrlf=true",
+                    "add",
+                    ".gitattributes",
+                    str(m.VENDOR),
+                ],
+                check=True,
+                capture_output=True,
+            )
+            stored = subprocess.run(
+                ["git", "-C", str(root), "show", ":third_party/mediapipe/METADATA"],
+                check=True,
+                capture_output=True,
+            ).stdout
+            self.assertEqual(stored, raw)
+
     def test_package_models_graphs_and_license_are_kept(self):
         m = module()
         with tempfile.TemporaryDirectory() as folder:

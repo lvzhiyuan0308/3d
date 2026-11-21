@@ -1,1 +1,9 @@
 * text=auto eol=lf
+
+# Preserve upstream package bytes, including CRLF metadata covered by SHA-256.
+third_party/mediapipe/models/** -text
+third_party/mediapipe/graphs/** -text
+third_party/mediapipe/wheels/** -text
+third_party/mediapipe/LICENSE -text
+third_party/mediapipe/METADATA binary
+third_party/mediapipe/WHEEL -text
