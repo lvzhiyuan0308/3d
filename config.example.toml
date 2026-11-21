@@ -32,3 +32,12 @@ yaw_deg = -90
 name = "back"
 crop = [583, 36, 783, 570]
 yaw_deg = 180
+
+# Optional. Defaults reproduce the original behaviour.
+# [subject]
+# height_m = 1.695          # used for the fit's height prior (1.0 - 2.3)
+# height_measured = false   # set true only if this is a real measurement
+#
+# [fit]
+# use_view_weights = false  # true: apply each view's geometry_weight in the fit
+# height_weight = 0.4       # weight of the height prior (5 cm error is ~0.001 at 0.4)

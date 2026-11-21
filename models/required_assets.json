@@ -1,0 +1,8 @@
+{
+  "weights_distributed": false,
+  "file_name": "SMPLX_FEMALE.npz",
+  "bytes": 137193916,
+  "sha256": "a32f91b24e13023b979ec0b5c8e9086f5918197132329c8a258ad1f1c6c557f6",
+  "source": "https://smpl-x.is.tue.mpg.de/",
+  "purpose": "Identify the externally obtained model used for the recorded run"
+}

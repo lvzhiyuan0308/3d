@@ -2,13 +2,17 @@
 
 使用 **SMPL-X + 四视图体型拟合 + 独立服装/实体头发 + 按类别过滤的贴图投影**，将参考素材转换为可编辑人物模型和打印版 STL。
 
-本项目整理自 Windows + RTX 4060 Laptop 8 GB 的 V2 本地实验。输出为 GLB、OBJ/MTL/PNG、200 mm STL 和实际网格渲染预览。照片、模型权重、拟合检查点与生成文件不随代码提交。
+本项目整理自 Windows + RTX 4060 Laptop 8 GB 的 V2 本地实验。输出为 GLB、OBJ/MTL/PNG、200 mm STL 和实际网格渲染预览。仓库包含本次原照片、参考图和 V2 预览；SMPL-X 权重、拟合检查点及大型生成模型保留本地。
+
+![已保存的 V2 实际网格预览](docs/images/v2/preview_board.png)
+
+这张图是此前 V2 输出。审查补丁主要修正拟合分辨率依赖、配置项和几何循环，不代表已完成更高精度的人脸或发型重建。
 
 ## 当前效果与边界
 
 | 内容 | 已实现 | 当前限制 |
 | --- | --- | --- |
-| 人体 | 多视图共享体型、各视图独立姿态/正交相机；有界 SMPL-X+D | 身高 1.695 m 为未测量先验；合成视图不是扫描真值 |
+| 人体 | 多视图共享体型、各视图独立姿态/正交相机；有界 SMPL-X+D | 默认身高 1.695 m 为未测量先验，可配置；合成视图不是扫描真值 |
 | 衣物 | 独立上衣、袖子、袖口、斜下摆裙 | 参数化几何；多数褶皱来自贴图 |
 | 头发 | 删除 V1 脸侧薄片，闭合后发实体埋入头部/上背 | 简化发块和程序纹理，未恢复真实发丝 |
 | 贴图 | 同类像素过滤、边缘腐蚀、深度遮挡检查、4K 图集 | 颜色/区域规则分割；遮挡区域使用同类补色 |
@@ -50,10 +54,14 @@ Copy-Item config.example.toml config.local.toml
 | `runtime.device` | `auto` / `cuda` / `cpu`；CUDA 不可用时显式请求会报错 |
 | `views` | 按 front、left、right、back 顺序配置裁切框与初始 yaw |
 | `face` | 原照片和已裁切正视图中的脸部 ROI |
+| `subject.height_m` | 拟合身高先验，默认 1.695 m；范围 1.0–2.3 m |
+| `subject.height_measured` | 只有真实量测时才设为 `true`，默认 `false` |
+| `fit.height_weight` | 身高先验权重，默认 0.4 |
+| `fit.use_view_weights` | 是否使用 `views.json` 的 `geometry_weight`，默认 `false` 以保持原有数值行为 |
 
 **相对路径均相对于配置文件所在目录**，与启动命令的当前目录无关。示例裁切框适配原实验的 791×614 四视图板；换图必须检查裁切、脸部 ROI、颜色分割和衣物几何先验。目前不是任意人物/任意服装的一键重建工具。
 
-SMPL-X 权重不在仓库内。请从 [SMPL-X 项目](https://smpl-x.is.tue.mpg.de/)取得相应文件并遵守其发布条款；代码提交不改变权重或输入照片的权利归属。
+SMPL-X 权重不在仓库内。请从 [SMPL-X 项目](https://smpl-x.is.tue.mpg.de/)取得相应文件并遵守其发布条款；代码提交不改变权重或输入照片的权利归属。版本指纹见 [模型说明](models/README.md)，图片列表和校验值见 [输入说明](data/README.md)。
 
 ## 运行
 
@@ -138,11 +146,16 @@ GLB/OBJ 为交叠的可编辑分层曲面，不等同于已融合的单体 STL�
 `src/human3d/` 中：`core.py` 为 LBS/投影/栅格器；`layered.py` 为衣物与头发；`texture_semantics.py` 为类别源图与肤色处理；`settings.py` 管理配置；`cli.py` 负责流程；`stages/` 保存各阶段。
 
 ```powershell
-python -m unittest discover -s tests -v
+python run_tests.py
+python run_tests.py --slow
 python run.py --config config.local.toml stage check-core
 ```
 
-单元测试不需要模型或照片，覆盖路径解析、无效裁切、深度方向、遮挡串色回归与 Python socket 限制。完整几何/打印验证需要真实本地输入及 SMPL-X 权重。
+单元测试不需要真实模型或照片，覆盖路径解析、拟合分辨率与视图权重、向量化几何与原循环的一致性、遮挡串色及 Python socket 限制。`--slow` 额外生成椭球形合成模型，在 534 px / 300 px 两种面板高度下完整拟合，检查体型参数变化；它不是人物重建精度评测。结果摘要保存在 `work/test_results.json`。
+
+本机已有环境可用 `python -s run_tests.py --legacy-user-site --slow`；测试的拟合子进程会继承该兼容模式。标准 `python -m unittest discover -s tests -v` 仍可使用，默认跳过慢速测试；设置 `HUMAN3D_SLOW_TESTS=1` 可启用。
+
+完整几何/打印验证需要真实本地输入及 SMPL-X 权重。
 
 `offline.py` 在计算子进程加载依赖前拒绝 Python socket 连接、DNS、发送和绑定，并关闭常见遥测开关。**这是 Python 审计限制，不是操作系统网络沙箱，不能保证拦截原生库的所有 I/O。** GitHub 操作与安装不属于计算子进程。
 

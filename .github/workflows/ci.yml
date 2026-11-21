@@ -1,0 +1,37 @@
+name: tests
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  unit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      HUMAN3D_SLOW_TESTS: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install CPU dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install "torch==2.8.0" --index-url https://download.pytorch.org/whl/cpu
+          pip install "numpy==1.26.4" "scipy==1.17.1" "numba==0.60.0" "opencv-python-headless==4.11.0.86" "trimesh==5.2.1" "scikit-image==0.22.0" "pillow==10.4.0" "smplx==0.1.28" ruff
+      - name: Lint the modules added in this change
+        run: ruff check src/human3d/fit_terms.py src/human3d/geom2d.py tests/test_review_fixes.py
+      - name: Unit tests
+        run: python run_tests.py --slow
+      - name: Upload test summary
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: work/test_results.json
+          if-no-files-found: ignore

@@ -1,7 +1,16 @@
 # Local inputs and model-derived data
-/data/
+/data/*
+!/data/README.md
+!/data/manifest.json
+!/data/original.jpg
+!/data/turnaround.png
+!/data/references/
+/data/references/*
+!/data/references/*.png
 /work/
-/models/
+/models/*
+!/models/README.md
+!/models/required_assets.json
 /config.local.toml
 *.npz
 *.npy

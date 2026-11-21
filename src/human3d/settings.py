@@ -25,6 +25,11 @@ class Settings:
     views: tuple
     face_photo_crop: tuple
     face_reference_crop: tuple
+    # Subject and fitting options. Defaults reproduce the original behaviour.
+    height_m: float = 1.695
+    height_is_measured: bool = False
+    fit_use_view_weights: bool = False
+    fit_height_weight: float = 0.4
 
 
 def load_settings(config=None):
@@ -58,6 +63,14 @@ def load_settings(config=None):
         raise ValueError("Views must be ordered front, left, right, back")
     baseline = paths.get("baseline_delivery")
     face = data.get("face", {})
+    subject = data.get("subject", {})
+    fit = data.get("fit", {})
+    height = float(subject.get("height_m", 1.695))
+    if not 1.0 <= height <= 2.3:
+        raise ValueError("subject.height_m must be between 1.0 and 2.3 metres")
+    height_weight = float(fit.get("height_weight", 0.4))
+    if height_weight < 0:
+        raise ValueError("fit.height_weight must be non-negative")
     return Settings(
         path,
         resolve(paths.get("work_dir", "work")),
@@ -69,6 +82,10 @@ def load_settings(config=None):
         tuple(views) or DEFAULT_VIEWS,
         tuple(face.get("photo_crop", [290, 40, 480, 235])),
         tuple(face.get("reference_crop", [60, 0, 165, 115])),
+        height,
+        bool(subject.get("height_measured", False)),
+        bool(fit.get("use_view_weights", False)),
+        height_weight,
     )
 
 

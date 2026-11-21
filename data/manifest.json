@@ -1,0 +1,95 @@
+[
+  {
+    "path": "data/original.jpg",
+    "bytes": 377088,
+    "sha256": "45d8556a322259fa509b8b321e7342fe3ac0bfbd57f5b48edd1d08fd9fe6a4e1",
+    "original_name": "original_reference_photo.jpg",
+    "kind": "original_photo"
+  },
+  {
+    "path": "data/turnaround.png",
+    "bytes": 493159,
+    "sha256": "7d0b2372e01614d1c0c6967f100061162762312e3de3ae1cb0c3f85340ea6504",
+    "original_name": "separate_reference_panels/01_正交三视图_Front_Left_Right_Back.png",
+    "kind": "generated_reference"
+  },
+  {
+    "path": "data/references/detailed_character_board.png",
+    "bytes": 2089097,
+    "sha256": "02b1e1cdf3dcb73f786fd7faefd3aae1e4ab70c22435d26b7d3e4c3d26ddefa0",
+    "original_name": "generated_references/02_detailed_character_reference_board.png",
+    "kind": "generated_reference"
+  },
+  {
+    "path": "data/references/turnaround_head_clothing_pbr_board.png",
+    "bytes": 2085987,
+    "sha256": "063a9a49ec19e2fa8db4fe581992d63878414f6c8c6cd081a27fb4096cd82954",
+    "original_name": "generated_references/01_character_turnaround_head_clothing_pbr_board.png",
+    "kind": "generated_reference"
+  },
+  {
+    "path": "data/references/clean_layout_board.png",
+    "bytes": 1966478,
+    "sha256": "db8db86485227b2bfea880c738ab266f4ecf4acb9a32c5fa4c30f27d4dbd88e9",
+    "original_name": "generated_references/03_clean_layout_reference_board.png",
+    "kind": "generated_reference"
+  },
+  {
+    "path": "data/references/pbr_appearance_reference.png",
+    "bytes": 332436,
+    "sha256": "77d14bb27a95a276242141b1c9c34ed4d9c1bff0c6380494b13170e67b6a787b",
+    "original_name": "separate_reference_panels/05_PBR贴图外观参考.png",
+    "kind": "generated_reference"
+  },
+  {
+    "path": "data/references/a_pose_t_pose_reference.png",
+    "bytes": 148736,
+    "sha256": "752d4e85052d1076f2f37efbe085bc3bba6420fc1e4dc375fa7c814ba62cb21c",
+    "original_name": "separate_reference_panels/02_A_Pose_T_Pose姿态参考.png",
+    "kind": "generated_reference"
+  },
+  {
+    "path": "data/references/clothing_and_shoes_details.png",
+    "bytes": 464920,
+    "sha256": "5b16c8c841b5b0f16224a07d07668b772f9f93a9b224e6cb260dd78b329ab14a",
+    "original_name": "separate_reference_panels/04_服装与鞋履细节.png",
+    "kind": "generated_reference"
+  },
+  {
+    "path": "data/references/head_details.png",
+    "bytes": 273958,
+    "sha256": "38dc73c1785ef2df99e7cdeea26ba821f814f286fbfef03a3200481ca754d454",
+    "original_name": "separate_reference_panels/03_头部细节_正面_45度_侧面.png",
+    "kind": "generated_reference"
+  },
+  {
+    "path": "docs/images/v2/preview_board.png",
+    "bytes": 185415,
+    "sha256": "57074d4fe0b9d0c6b0e6fcddf172c8ec34ed0e1612f4921fe08c36f348140197",
+    "kind": "actual_mesh_render"
+  },
+  {
+    "path": "docs/images/v2/comparison_v1_v2.png",
+    "bytes": 176964,
+    "sha256": "c64c71a2cced12c95572dcc638f12317ec01e42b0271fc7dd26508211d78d2da",
+    "kind": "actual_mesh_render"
+  },
+  {
+    "path": "docs/images/v2/detail_face.png",
+    "bytes": 278154,
+    "sha256": "ff9a9a88e3cfc888a37739d71fb1467b1bda9ff172eb6206f404707d7b0e6a93",
+    "kind": "actual_mesh_render"
+  },
+  {
+    "path": "docs/images/v2/detail_hair_back.png",
+    "bytes": 353958,
+    "sha256": "1149d305e8c55ea06eacfdf00e6ece95f88fe076540fda9c5cde1715359710cf",
+    "kind": "actual_mesh_render"
+  },
+  {
+    "path": "docs/images/v2/preview_print.png",
+    "bytes": 179190,
+    "sha256": "82a81585020661cf23ce69ad07071662ff00ed147d46e3fa6d6ef3d73e5d5c8b",
+    "kind": "actual_mesh_render"
+  }
+]
